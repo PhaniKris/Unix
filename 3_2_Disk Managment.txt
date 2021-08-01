@@ -1,0 +1,56 @@
+Disk Management
+-------------------------------
+Partitioning Scheme : MBR [ Master Boot Record ] == GPT [ GUID Partition Table ]
+MBR Partitioning Scheme -
+------------------------
+1. Since 1982, this partitioning schme has dictated how disks are partitioned on systems using BIOS firmware.
+2. This scheme supports a maximum of 4 Primary Partitions
+3. With the use of extenedd and logical partitions, admins can create a maximum of 15 partitions on Linux Systems. In MBR scheme, a partition can have a max size of 2 TiB
+5. Logical partition always starts from 5
+
+GPT Partitioning Scheme
+-----------------------
+1. For systems running UEFI [ Unified Extensible Firmware Interfcae ], GPT is the standard
+2. Using GPT, we can create a maximum of 128 partitions
+3. Supports partitions and disks of uptp 8 Zebibytes(ZiB) or 8 billion tebibytes.
+4. A GPT uses a globally unique identifier(GUID) to identify each disk and partition.
+5. In contrast to MBR which has a single point of failure(SPOF), a GPT offers redundancy of its partition 
+   table information. The primary GPT resides at the head of the disk, while a backup copy, the secondary GPT
+   is housed at the end of the disk
+
+IDE/PATA ==> hda
+SATA ==> sda
+Vitual ==> vda
+           vdb
+
+Partitioning Tools :: parted / fdisk
+lsblk ==> to list the block devices
+fdisk -l /dev/sda
+parted /dev/sda print
+parted /dev/sda
+parted>print
+
+Note: In Linux, we do not have any drive letter concept like windows. We have mount point which is nothing
+but a directory. This directory needs to be mapped with the disk partition. This mapping process is known
+as Mounting. We use the mount command for this mounting/mapping process.
+
+Disk Managment and Filesystem Management
+----------------------------------------
+To display the block devices ==> lsblk
+To display partition table => fdisk -l   /   parted
+Partitioning Scheme :
+A. MBR Partitioning scheme ==> MBR stands for Master Boot Record. This scheme has dictated how
+   disks are partitioned on systems running BIOS firmware. 
+    i) It supports a max of 4 primary partitions
+    ii) Total no. of partitions that can be created is 15
+    iii) Maximum size of a partition could be 2 TiB
+
+Note : Partition no 1 to 4 is reserved for Primary partition. Logical partition always start
+       from 5.
+
+B. GPT Partitioning scheme ==> GPT stands for GUID Partition Table. It is for systems running
+   UEFI (Unified Extensible Firmware Interface)
+    i) No primary-extended-logical partition concept
+    ii) Total no. of partitions that can be created is 128
+    iii) Maximum size of a partition could be upto 8 Zebibyte(ZiB) or eight billion tebibytes
+

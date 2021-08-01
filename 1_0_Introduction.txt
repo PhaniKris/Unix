@@ -1,0 +1,69 @@
+LinuxÂ® is an open source operating system (OS). An operating system is the software that directly manages a systemâ€™s hardware and resources, like CPU, memory, and storage. 
+The OS sits between applications and hardware and makes the connections between all of your software and the physical resources that do the work.
+Think about an OS like a car engine. An engine can run on its own, but it becomes a functional car when itâ€™s connected with a transmission, axles, and wheels.
+ Without the engine running properly, the rest of the car wonâ€™t work.
+The LinuxÂ® kernel is the main component of a Linux operating system (OS) and is the core interface between a computerâ€™s hardware and its processes. 
+It communicates between the 2, managing resources as efficiently as possible.
+The kernel is so named becauseâ€”like a seed inside a hard shellâ€”it exists within the OS and controls all the major functions of the hardware, whether itâ€™s a phone, laptop, server, or any other kind of computer.
+
+What the kernel does
+The kernel has 4 jobs:
+
+1. Memory management: Keep track of how much memory is used to store what, and where
+2. Process management: Determine which processes can use the central processing unit (CPU), when, and for how long
+3. Device drivers: Act as mediator/interpreter between the hardware and processes
+4. System calls and security: Receive requests for service from the processes
+
+
+Where the kernel fits within the OS
+To put the kernel in context, you can think of a Linux machine as having 3 layers:
+
+1. The hardware: The physical machineâ€”the bottom or base of the system, made up of memory (RAM) and the processor or central processing unit (CPU), as well as input/output (I/O) devices such as storage, networking, and graphics. The CPU performs computations and reads from, and writes to, memory.
+
+2. The Linux kernel: The core of the OS. (See? Itâ€™s right in the middle.) Itâ€™s software residing in memory that tells the CPU what to do.
+
+3. User processes: These are the running programs that the kernel manages. User processes are what collectively make up user space. User processes are also known as just processes. The kernel also allows these processes and servers to communicate with each other (known as inter-process communication, or IPC).
+
+Create an account in redhat.com
+Go to https://developers.redhat.com -- login -- Download RHEL
+Install RHEL and Register
+
+Prof. Andrew Tanenbaum ===> Minix [ a miniature version of Unix ]
+Linus Torvalds ==> Developed a Kernel and named it as Linux .. uploaded in internet ... community..known
+as the "Father of Linux"
+Linux kernel is open source.
+Linux is a kernel
+
+Kernel ==> It is the core/heart of any OS. It can interact with the system H/W directly.
+What is the kernel file name? Where does kernel reside?
+vmlinuz is the  name and it resides with the /boot directory
+How to see the kernel version? uname -r
+Kernel interacts with system H/W using System Calls (are some special 'C' functions)
+eg. ioctl(), fork() rtc.
+
+
+Shell ==> is a utility program which acts as an interface between the user and the kernel. User processes
+would be running here. 
+Shell also works as an interpreter which translates human language to machine language and vice versa.
+
+The default shell in Unix ==> Bourne shell (sh)
+The default shell in Linux ==> Bourne Again Shell (bash)
+
+Unix variants ==> SCO Unix / IBM AIX / HP-UX / Oracle Solaris
+
+Windows vs. Linux
+-----------------
+1. Windows is proprietory and Linux is Open Source
+2. Windows is case sensitive but Linux is 100% case sensitive
+3. In Windows the superuser is Administrator but in Unix and Linux, it is root
+4. We do use backslash(\) while defining path of a file, but in Linux it is frontslash(/)
+5. Normal user/Administrator ==> c:\  ,  in Linux for root ==> # and for normal users ==> $
+6. Linux has single-rooted diectory structure but windows has multi-rooted directory structure
+
+
+---------------------------------------------------
+Linux Distribution ==> Kernel + GNU Utils + Shell 
+Distributions ==> Slackware / Oracle Linux / Suse Linux / Ubuntu / CentOS / Fedora / RHEL 
+Redhat ==> Redhat Linux [ FREE ] --> 4 / 5 / 6 / 7 / 8 / 9
+	Enterprise Distribution ==> RHEL [ Redhat Enterprise Linux ] --> RHEL8
+	Community Distribution ==> Fedora / CentOS

@@ -1,0 +1,17 @@
+VDO ==> Virtual Data Optimizer..Was introduced in RHEL 7.5 Beta
+---------------------------------------------------
+What is VDO? It is a kernel module that can save disk space and reduce replication bandwidth
+It sits on top of any block storage device and provides zero-block elimination, deduplication
+of redundant blocks and data compression
+----------------------------------------------------
+1. RHEL8 includes the VDO driver, which optimizes the data footprint on the block devices.
+2. VDO is Linux device mapper driver that reduces disk space usage on block devices and
+   minimizes the replication of data, saving disk space.
+3. VDO includes 2 kernel modules : kvdo [ used for data compression ] and uds [ for deduplication ]
+4. The VDO layer is placed on top of an existing block storage device such as a RAID device or
+   a local disk. The storage layers, such as LVM Logical Volumes and File Systems, are placed
+   on of a VDO device.
+5. The logical devices that we creae using VDO are called VDO volumes. 
+6. VDO volumes are similar to disk partitions, we can format the volumes with the desired filesystem and 
+   mount it like a regular filesystem. We can also use VDO volume as an LVM Physical volume.
+

@@ -1,0 +1,39 @@
+Tune System performance
+----------------------
+System administrators can optimize the performance of a system by adjusting varios 
+device settings based on a variety of use case workloads.
+
+RHEL8 installation includes and enables the tuned package by default.
+tuned = > is a Dynamic System Tuning Daemon
+	yum install tuned
+	systemctl enable --now tuned
+
+Select Tuning Profile
+---------------------
+tuned-adm list ==> It lists all available tuning profiles
+
+To set a specific tuning profile==> tuned-adm profile powersave
+				    tuned-adm active ==> displays powersave now
+
+If it is a VM, the recommended profile would be => virtual-guest
+						   tuned-adm recommend
+
+
+Turn off tuned tuning activity ==> tuned-adm off
+				   
+Example : Creation of a new custom profile inherining an existing profile
+-------------------------------------------------------------------------
+    man 5 tuned.conf
+    cd /usr/lib/tuned    ==> This is the tuning profiles directory. Each directory
+    contains a tuned.conf file
+    mkdir sas-performance
+    cd sas-performance
+    cp ../desktop/tuned.conf .
+    vim tuned.conf
+	[main]
+        include=throughput-performance
+        Save and Quit
+
+    tuned-adm profile sas-performance
+    tuned-adm active ==> It displays sas-performance
+

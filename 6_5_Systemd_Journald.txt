@@ -1,0 +1,17 @@
+systemd-journald
+----------------
+   The systemd-journald service stores logging data in a structured,indexed binary file called the Journal.
+   In RHEL7 and RHEL8, the /run/log directory stores the system journal by default. The contents of the /run/log
+   directory get clered after a reboot.
+   
+   journalctl ==> To retrieve log messages from the Journal, this command is used.
+   
+   By default, the system journals are kept in the /run/log/journal directory
+   The configuration file ==> /etc/systemd/journald.conf
+   We need to change the configuration settings of the systemd-journald service in the /etc/systemd/journald.conf
+   file to make the journals persistent across reboot. The storage parameter can be set to -
+        persistent - stores journals in /var/log/journal directoryo which persists across reboot. If the /var/log/journal
+        directory does not exist, the systemd-journald service creates it
+        volatile - stores journals in the volatile /run/log/journal directory
+        auto - rsyslog determines whether to use persistent or volatile storage. If the /var/log/journal directory
+        exists, then rsyslog uses persistent storage, else it uses volatile storage.

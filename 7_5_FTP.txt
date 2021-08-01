@@ -1,0 +1,25 @@
+Installing and Configuring FTP Server
+-------------------------------------
+FTP = File Transfer Protocol. Used for transferring files (upload/download) across systems in the network.
+Ports : 20 ( Data )   21 ( Connection )
+Package : vsftpd [ Very Secure FTP Daemon ]
+
+Install vsftpd package ==> yum install vsftpd
+Start and Enable vsftpd daemon ==> systemctl enable --now vsftpd
+Configuration File ==> /etc/vsftpd/vsftpd.conf
+FTP user ==> 1. Registered User    2. Anonymous User
+Anonymous user can download files but can NOT upload files by default.
+
+To check on which port the server is listening on ==>
+        netstat -tlpn | grep ftp
+
+FTP root directory ==> /var/ftp
+Install FTP client package ==> yum install ftp
+
+Allow Anonymous access to the FTP server ==> anonymous_enable=YES
+Allow/Deny User access ==>
+     /etc/vsftpd/user_list
+      # If userlist_deny=NO, only allow users in this file
+      # If userlist_deny=YES (default), never allow users in this file, and do not even prompt for a password.
+
+     /etc/vsftpd/ftpusers ==> List the users who can NOT login to FTP server

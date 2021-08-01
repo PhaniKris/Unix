@@ -1,0 +1,120 @@
+Automated Installation
+=====================
+You can automate the installation of Red Hat Enterprise Linux using a feature called Kickstart. Using Kickstart, you specify everything Anaconda needs to complete an installation, including disk partitioning, network interface configuration, package selection, and other parameters, in a Kickstart text file. By referencing the text file, Anaconda performs the installation without further user interaction.
+
+Kickstart Installation Steps ==>
+--------------------------------
+1. Create a Kickstart file.
+
+2. Publish the Kickstart file to the installer.
+
+3. Boot Anaconda and point it to the Kickstart file.
+
+Creating a Kickstart File
+-------------------------
+Use either of these methods to create a Kickstart file:
+
+==> Use the Kickstart Generator website.
+==> Use a text editor.
+
+The Kickstart Generator website at https://access.redhat.com/labs/kickstartconfig/ presents dialog boxes for user inputs, and creates a Kickstart directives text file with the user's choices. Each dialog box corresponds to the configurable items in the Anaconda installer.
+
+Publish the Kickstart File to Anaconda
+-------------------------------------
+Make the Kickstart file available to the installer by placing it in one of these locations:
+
+==> A network server available at install time using FTP, HTTP, or NFS.
+==> An available USB disk or CD-ROM.
+==> A local hard disk on the system to be installed.
+
+Boot Anaconda and Point it to the Kickstart File
+Once a Kickstart method is chosen, the installer is told where to locate the Kickstart file by passing the inst.ks=LOCATION parameter to the installation kernel. Some examples:
+
+inst.ks=http://server/dir/file
+eg. inst.ks=http://192.168.1.254/ks-config/ks.cfg
+inst.ks=ftp://server/dir/file
+
+inst.ks=nfs:server:/dir/file
+
+
+DISPLAYING THE DESKTOP WITH WAYLAND AND X
+-----------------------------------------
+Wayland is a client/server windowing system designed to replace X11. The performance improvements of Wayland over X11 are derived from the simplification of the architecture
+
+Reasons to Switch to Wayland
+• The X display server has become a bottleneck between clients, the compositor, and the kernel.
+• X has legacy code such as the rendering API that is rarely used but must remain to conform to
+the X11 protocol.
+
+Verify Wayland is Being Used
+----------------------------
+Use the following steps to determine whether your desktop is using Wayland.
+[user1 ~]$ loginctl
+SESSION UID USER SEAT TTY
+2 1000 user1 seat0 tty2
+c1 42 gdm seat0 tty1
+2 sessions listed.
+[user@demo ~]$ loginctl show-session 2 -p Type
+Type=wayland
+
+Gnome 3 uses Wayland by default. However, not all applications in Red Hat Enterprise Linux 8 have
+been migrated.
+
+If Wayland is incompatible with your graphics hardware or application, it is a simple process to
+revert to using Xorg. Uncomment the following line in /etc/gdm/custom.conf and then reboot
+your machine.
+#WaylandEnable=false
+
+MANAGING USER AUTHENTICATION WITH AUTHSELECT
+-------------------------------------------
+INTRODUCING AUTHSELECT
+Red Hat Enterprise Linux 8 ships with Authselect, which simplifies the configuration of user
+authentication, and replaces Authconfig. Authselect uses a different and safer approach, based on
+profiles that make configuration changes simpler for system administrators. Authselect is used to
+configure the usual authentication parameters such as passwords, certificates, smart cards, and
+fingerprints.
+
+Features of Authselect
+----------------------
+• Adjusts PAM, NSS, and GNOME dconf settings.
+• Ships with three ready-to-use profiles: sssd, winbind, and nis.
+• pam_pwquality is enabled by default to enforce password quality restrictions on local users.
+
+
+Comparing Authselect and Authconfig
+-----------------------------------
+• Authselect uses tested profiles, instead of directly modifying the system authentication
+configuration files.
+• Authselect only modifies files in /etc/nsswitch.conf, /etc/pam.d/*, and /etc/dconf/
+db/distro.d/*.
+
+How to Use Authselect
+---------------------
+• Use the authselect list command to list the default and custom profiles.
+• The default profiles are stored in /usr/share/authselect/default.
+• Use the authselect create-profile command to create new custom profiles.
+• Custom profiles are stored in the /etc/authselect/custom/ directory.
+
+
+Practice
+-------
+1. Authselect is installed by default in RHEL 8. Review the available options
+	authselect --help
+2. List the available Authselect profiles.
+	authselect list
+3. List the currently selected Authselect profile
+	authselect surrent
+4. Determine if the current configuration is valid
+	authselect check
+5. Print the Authselect profile requirements
+	authselect requirements sssd
+6. Show the Authselect profile details and optional features
+	authselect show sssd
+7. Select an Authselect profile
+	authselect select sssd
+8. Review the contents of /etc/nsswitch.conf
+	grep sss /etc/nsswitch.conf
+9. Select another Authselect profile on servera to compare
+	authselect select nis
+10. Review the contents of /etc/nsswitch.conf
+	grep nis /etc/nsswitch.conf

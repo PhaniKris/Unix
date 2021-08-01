@@ -1,0 +1,35 @@
+Software Firewall
+Hardware Firewall - Cisco PIX
+Linux ==> ipchains / iptables / firewalld
+is a packet filtering software
+The linux kernel includes netfilter, a framework for network traffic operations
+such as packet filtering,NAT,Port translation.
+
+Linux kernel also includes nftables, a new filter and packet classification
+subsystem that has enhanced features.
+
+firewalld==> is a dynamic firewall manager. It is a front-end to the nftables
+framework. Until the introduction of nftables, firewalld used the iptables command to configure netfilter directly.
+
+Configuring Firewall
+-------------------
+1. Dirctly edit config files in /etc/firewalld/
+2. The firewll-cmd command-line tool
+3. The Web Console graphical interface [ cockpit ]
+
+yum install firewalld
+systemctl start firewalld
+systemctl enable firewalld
+
+firewall-cmd --list-services
+firewall-cmd --list-ports
+firewall-cmd --list-all
+
+Allow http service through firewall ==>
+ firewall-cmd --permanent --add-service=http
+ firewall-cmd --reload
+
+Allow port 80 through firewall ==>
+ firewall-cmd --permanent --add-port=80/tcp
+ firewall-cmd --reload
+

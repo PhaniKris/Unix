@@ -1,0 +1,42 @@
+Manage SELinux Security
+----------------------
+Selinux => Security Enhanced Linux
+DAC = Discretionary Access Control => Basic Perm. / Ownership / ACL / Spl. Perm.
+MAC = Mandatory Access Control => Selinux / Booleans
+Subject ==> Process eg. httpd
+Object ==> Directory / File   eg. /var/www/html
+
+A subject can only access an object if the selinux type of both matches.
+
+
+Selinux Modes ==> Enforcing ==> Selinux is enforcing access control rules
+                  Permissive ==> Warning only mode
+                  Disabled ==> Selinux is turned off
+
+ getenforce => To display the Selinux mode
+ setenforce 0 => To switch the mode to Permissive
+ File ==> /etc/selinux/config
+ Enforcing / Permissive to Disabled Or Disabled to Enforcing/Permissive needs
+  reboot as Selinux relabelling is required....
+
+Selinux Security Context ==> User(_u) + Role(_r) + Type(_t)
+How to display Security Context? ls -lZ   or ls -dZ
+
+How to change the Selinux Type?
+  chcon => will make a run-time change
+  semanage fcontext ==> will change the type permanently
+
+chcon -t httpd_sys_content_t /webcontent
+restorecon -v /webcontent/ ==> The type gets reverted back
+
+yum install policycoreutils-python-utils [ needed for semanage command ]
+man semanage fcontext
+semanage fcontext -a -t httpd_sys_content_t "/web(/.*)?"
+restorecon -Rv /web
+
+yum install httpd
+systemctl start httpd
+systemctl enable httpd
+curl http://localhost
+echo "Webserver up and running" > /var/www/html/index.html
+curl http://localhost

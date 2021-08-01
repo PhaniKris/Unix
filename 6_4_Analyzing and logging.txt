@@ -1,0 +1,17 @@
+Analyzing and Storing Logs
+---------------------------
+1. Processes and the operating system kernel record a log of events that happen. These logs are used to audit
+   the system and troubleshoot problems.
+2. Log files are generally kept in the /var/log directory. These logs can be inepcted using normal text utilities
+   such as less and tail.
+3. Two daemons are responsible for logging in RHEL - rsyslog and systemd-journald
+
+4. The  /etc/rsyslog.conf  file  is the main configuration file for the rsyslogd which logs system messages on
+   *nix systems.
+        The rsyslog service uses the facility and priority of log messages to determine how to handle them.
+   Send a syslog message manually
+   ------------------------------
+   The logger command can send messages to the rsyslog service. By default, it sends the message to the user
+   facility with the notice priority(user.notice) unless specified otherwise with the -p option
+        logger -p local7.notice "Log entry got created on host" ==> /var/log/boot.log
+

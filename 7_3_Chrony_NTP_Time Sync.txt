@@ -1,0 +1,34 @@
+Maintain Accurate Time
+----------------------
+1. Correct synchronized system time is critical for log file analysis across multiple systems
+2. The Network Time Protocol (NTP) is a standard way foro machines to provide and obtain correct time information.
+3. A system may get accurate time information from Public NTP servers on the internet like NTP Pool Project.
+
+NTP ==> Network Time Protocol . used for time synchronization
+Daemon ==> ntpd[RHEL6] / chronyd[RHEL7/8]
+systemctl status chronyd
+Config file ==> /etc/chrony.conf
+  server <NTP_Server_IP> iburst
+
+systemctl restart chronyd
+systemctl enable chronyd
+
+To check ==> 
+	ntpq
+	ntpq> peer ==> displays the NTP server name with which my system is synchronized
+
+RHEL7/8 ==>
+	chronyc sources -c
+
+timedatectl ==> command to display the overview of the current time relared system settings - current time,
+time zone, NTP synchronization settings etc.
+
+To list the time zones ==> timedatectl list-timezones
+To change time zone ==> timedatectl set-timezone Asia/Kolkata
+To change the system's current time ==> timedatectl set-time
+					eg. timedatectl set-time 10:00:00
+
+To enable/disable NTP synchronizarion for automatic time adjustments ==> timedatectl set-ntp true
+
+NTP Pool Project ==> http://www.ntp.pool.org
+

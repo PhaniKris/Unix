@@ -1,0 +1,36 @@
+
+
+Managing Networking
+----------------------------
+Upto RHEL5 ==> network service ===> service network start ===> /etc/init.d/network start
+In RHEL6   ==> NetworkManager
+In RHEL7/8 ==> NetworkManager is the default networking service
+
+Network Interface Name : Upto RHEL6 ==> eth0, eth1....[eth stands for ethernet ]
+RHEL7/RHEL8 ==>
+ --> Ethernet interfaces begin with en
+ --> WLAN inetrfaces begin with wl
+ --> WWAN interfaces begin with ww
+The rest of the interface name after the type will be based on information provided by server's firmware or determined by the
+location of the device in the PCI topology.
+  => oN indicates that this is an on-board device and the server's firmware provided index number. So eno1 is an on-board
+    Ethernet device 1.
+  => sN indicates that this device is in PCI hotplug slot N. So ens3 is an Ethernet card in PCI hotplug slot 3
+
+To display the IP configuration ==> ifconfig  ///   ip a s
+To display the default gateway ==> route -n    ///  netstat -r
+To display the DNS server IP ==> cat /etc/resolv.conf
+
+Upto RHEL6 ==> 
+----------
+To configure network ==> setup / system-conig-network
+
+RHEL7/RHEL8 ==> nmtui / nmcli
+
+Interface configuration file ==> /etc/sysconfig/network-scripts/ifcfg-eth0
+
+To display hostname : upto RHEL6 ==> hostname
+		      in RHEL7/RHEL8 ==> hostname / hostnamectl
+If we change the machine name using hostname command, that is not permanent. If we need to make it persistent, then
+we have to edit /etc/sysconfig/network file
+But hostnamectl command makes the changes persistent by writing the entry in /etc/hostname file.

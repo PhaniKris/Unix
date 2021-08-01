@@ -1,0 +1,57 @@
+Configuring SAMBA Server
+==================================================
+What is SMB?
+Server Message Block(SMB) / CIFS (Common Internet File System) is the standard file-sharing protocol for Microsoft servers
+and clients.
+
+1. Install Samba Packages
+        yum install samba samba-common samba-client
+2. Prepare the permissionsa and Selinux Context on the directory to be shared
+        mkdir /smbshare
+        ls -dZ /smbshare
+        semanage fcontext -a -t samba_share_t '/smbshare(/.*)?'
+        restorecon -Rv /smbshare/
+3. Configure /etc/samba/smb.conf [ Samba Configuration File ]
+    1. Install Samba Packages
+        yum install samba samba-common samba-client
+2. Prepare the permissionsa and Selinux Context on the directory to be shared
+        mkdir /smbshare
+        ls -dZ /smbshare
+        semanage fcontext -a -t samba_share_t '/smbshare(/.*)?'
+        restorecon -Rv /smbshare/
+3. Configure /etc/samba/smb.conf
+     [myshare]
+     path = /myshare
+     public = yes
+     browseable = yes
+     writable = no
+
+    [private]
+    path = /confidential
+    browseable = yes
+    valid users = fred, @dba
+    write list = fred
+
+Validate the smb.conf ==> testparm
+
+4. Setup appropriate Linux users to work as samba only user
+        useradd -s /sbin/nologin fred
+        smbpasswd -a fred
+5. Start Samba service and open the ports in the firewall
+        systemctl start smb nmb
+        systemctl enable smb nmb
+        firewall-cmd --permanent --add-service=samba
+        firewall-cmd --reload
+6. Verify the samba shares from client system
+    Install cifs-utils package because it provides the mount.cifs command
+   Create a mount point
+        mkdir /mnt/{smbshare,private}
+   Mount the share
+        mount -o username=brian //Samba_Server_IP/private /mnt/private
+	Validate the smb.conf ==> testparm
+
+7. Permanent Mount
+    //172.31.2.195/private /mnt/private cifs username=fred,password=redhat,_netdev 0 0
+                        OR
+    //172.31.2.195/private /mnt/private cifs credentials=/root/user.txt,multiuser,sec=ntlmssp,_netdev 0 0
+

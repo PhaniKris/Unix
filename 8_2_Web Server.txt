@@ -1,0 +1,73 @@
+Webserver
+=====================================================================================================
+Web Server ==> Is used for hosting the websites.
+Package : httpd-2.4
+Protocol : http(80), https(443)
+Daemon : httpd
+Configuration File : /etc/httpd/conf/httpd.conf, /etc/httpd/conf.d/*.conf
+Modules Directory : /etc/httpd/conf.modules.d/*.conf
+Default Document Root : /var/www/html
+
+yum install httpd
+systemctl enable --now httpd
+firewall-cmd --permanent --add-service=http
+firewall-cmd --reload
+
+Virtual Website Hosting ===> IP Based [ separate IP for separate host ] and Name Based [ Same IP for multiple
+virtual hosts ]
+
+httpd -t ==> to check the syntax of httpd.conf file
+
+To configure 2 Virtual Websites ==>
+cd /etc/httpd/conf.d
+vim vhost.conf
+# Definition of the default website
+# =================================
+<VirtualHost _default_:80>
+ServerName server1.example.com
+DocumentRoot /var/www/html
+</VirtualHost>
+
+# Definition of the virtual website www1.example.com
+# =================================================
+<VirtualHost *:80>
+ServerName www1.example.com
+DocumentRoot /var/www/virtual
+</VirtualHost>
+
+# Grant access to /var/www/virtual directory
+<Directory /var/www/virtual>
+ AllowOverride None
+ Require all granted
+</Directory>
+
+Save and Quit
+httpd -t
+
+curl http://server1.example.com
+curl http://www1.example.com
+
+
+Hosting a PHP based website
+--------------------------
+PHP ==> mod_php
+CGI Script ==> mod_wsgi
+
+yum install mod_php
+systemctl restart httpd
+
+cd /var/www/html
+vim index.php
+<?php
+  echo "This is a PHP based website\n";
+?>
+
+curl http://www1.example.com should now display the PHP page
+
+
+To have the Home Page name other than index.html, we need to configure DirectoryIndex parameter in
+/etc/httpd/conf/httpd.conf file
+   DirectoryIndex index.html  start.html  index.php
+
+systemctl restart httpd
+

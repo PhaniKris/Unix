@@ -1,0 +1,25 @@
+Managing Package Module Streams
+--------------------------------
+1. RHEL8 introduces the concept Application Streams
+2. Modularity - allows a single repository to host multiple versions of an application's package
+   and its dependencies.
+3. RHEL8 content is distributed through 2 main software repositories--> BaseOS and AppStream
+   BaseOS - This repository provides the core OS content for RHEL as RPM packages
+   AppStream - This repository provides content with both modules and traditional RPM packages.
+
+  What is a Module?
+  A module is a set of RPM packages that are a consistent set that belong together. 
+
+4. Module Streams - Each module can have one or more module streams, which hold different versions of the
+   content.
+Note: Module streams must be enabled in order to install their modules. To simplify this process, when a module is installed, it enables its module
+streams if necessary.
+
+5. Managing Modules using YUM
+        yum module list ==>  To display a list of available modules
+        yum module list perl
+        yum module info perl
+        yum module remove perl
+        yum mosule disable perl
+        yum module list --installed ==> to display list of installed modules
+        yum module install python36:3.6

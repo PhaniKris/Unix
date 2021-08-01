@@ -1,0 +1,201 @@
+Linux Commands
+-------------
+1. Create a user and assign a password
+	useradd student
+	passwd student
+
+2. To switch to a particular user ==> su [ Switch User ]
+	su student [ It will only switch the UID but not the home directory ]
+	su - student [ Will change the UID and the Home directory ]
+
+Note: By default, root user will have home directory as /root and non-root users will have home directory
+within /home
+
+3. To list the files/directories ==> ls 
+				     ls -l  [ long listing ]
+
+4. To display the current working directory ==> pwd
+
+5. To change to a directory ==> cd <dir_name>
+   To go to the home directory => cd   OR  cd ~
+
+6. Symbolic representations ==> 
+	. ==> Current Directory
+	.. ==> Parent Directory
+ 	../.. ==> Parent to Parent directory
+	-    ==> Previous directory
+
+
+7. Shell commands have 3 basic parts - Command to run / Options to adjust the command behavior / Arguments
+        ls -l /tmp
+
+8. cal ==> to display the calender
+   cal 2020
+   cal 12 2020
+
+9. To redirect the output of a command to a file => ls -l /boot > boot.txt
+
+10. mkdir => To create a directory
+    mkdir database
+    cd database
+    mkdir oracle
+    mkdir mssql
+    mkdir {oracle,mssql}
+    mkdir database/{oracle,mssql}
+    mkdir -p database/{oracle,mssql}
+
+Path ==> Absolute Path and Relative Path
+        /home/student/database/oracle/ora.txt ==> Absolute Path
+        database/oracle/ora.txt ==> Relative Path
+
+rmdir ==> To remove an empty directory
+rm -rf ==> To remove a directory along with the contents
+
+11. Create files ==>
+        touch ==> to create empty file
+        touch file1 file2 file3 OR   touch file{1..3}    touch file{1..3}.mp3   touch file{1..3}.{mp3,txt}
+        cat > file1
+         hello
+        <ctrl> + d
+
+        cat file1 ==> To display the content of the file
+        >>  => Append
+        cat file1 >> file2  ==> Content of file1 would be appended to file2
+
+12. Copy  ==> cp
+    Move ==> mv
+
+13. logout / exit  ==> To logout from the system
+
+Lab: Create a directory structure along with some file in it
+------------------------------------------------------------
+mkdir database
+cd database
+mkdir mysql
+mkdir oracle
+    OR
+mkdir -p database/{mysql,oracle}
+mkdir database/mysql/{dir1,dir2}
+mkdir database/oracle/dir3
+touch database/mysql/dir1/file{1..3}
+touch database/mysql/dir2/file4
+cp database/mysql/dir1/file1 database/oracle/dir3
+mv database/mysql/dir1/file3 database/oracle/dir3
+
+ls -lR database
+
+To display the directory structure in tree format ==> tree
+   yum install tree
+
+================================================================
+14. who ==> To list the currently logged-in users
+    who am i / whoami ==> To list the current user only
+15. history ==> To list all commands which we have executed
+    !NO ==> To recall a command from hsitory
+    history -c ==> To clear the history
+    history -d NO ==> To delete a specific command from history
+    To display the value of HISTSIZE Environment variable ==> echo $HISTSIZE
+    To set a custom value for HISTSIZE variable ==> HISTSIZE=100
+
+16. Word Count ==> wc
+	wc /etc/passwd ==> Displays no. of lines/words/characters within /etc/passwd file
+	wc -l /etc/passwd ==> Lines
+	wc -w /etc/passwd ==> Words
+ 	wc -c /etc/passwd ==> Characters
+	wc -lc /etc/passwd ==> Lines+Characters
+
+17. Help commands in Linux ==> man / info / pinfo 
+	man ls
+    pinfo is more advanced than the original info command. It provides a browser-like functionality where in
+    we can browse options using hyperlinks. eg. pinfo tar
+    To get the man pages section ==> yum install man-pages
+	man -k passwd
+	man 5 passwd ==> This will take us to the 5th section of the passwd manual page
+
+18. Linux Editors ==> vi [ Visual Editor ]==> Default editor of Unix
+		      vim [ Visual Improved ] ==> Default editor of Linux
+		      nano => simple editor just like notepad
+		      gedit => Graphical Editor
+		      gvim => Graphical version of vim
+
+	vi / vim commands==>
+  	-------------------
+	i => Insert Mode
+	a => Append Mode
+	x => To delete a single character
+	dd => To delete a line
+	2 yy(yank) p => Copies 2 lines and paste
+	2 dd p => Deletes 2 lines and paste
+	o => To insert a line below
+	O => To insert a line above
+	u => Undo the last operation
+	/expression => To search for an expression
+	:nohl => To remove highlights
+	:wq => To save and Quit
+	:w! => Save without Quit
+	:q! => Quit without Save
+	:se nu => To display the line numbers
+	:set nonumber => To remove the line numbers
+        Find and Replace ==> :%s/linux/RHEL/g ==> It will replace all occurances of linux by RHEL
+
+        Visual Modes of vim ==> (Selection for copy) within file
+	a. Character Mode - v
+	b. Line Mode - V
+	c. Block Mode - <CTRL>+v
+
+19. Linux Filesystem Hierarchy -> All files in Linux system are stored on file systems, which are organized into
+    a single inverted tree of directories known as file-system hierarchy.
+
+  ==> which command displays the path of a Binary File
+
+20. User and Group Administration ==>
+     a.	A user account is used to provide security boundary for a specifc user
+     b. 3 main types of user accounts - superuser [ Privileged user ], system users and regular 
+        users [non-privileged users] 		
+	The name of superuser is root and the it has UID 0
+	Users do NOT interactively login using system user accounts
+     c. id command can be used to display user information
+     d. Every user is assigned a unique UID by the OS
+     e. To create a user ==> useradd <username>
+	By default, system uses the /etc/passwd file to store user information.
+	Each line in /etc/passwd file contains information about one user and it contains 7 fields
+	separated by ':'
+    username:password(x):UID:GID:GECOS Field:Home Directory:Login Shell
+     
+   Group ==> is collection of users.
+     a. Each group will have a unique GID. root users has default GID 0
+     b. Group information is stored in /etc/group file
+	groupadd sysadmin
+     c. Each line in /etc/group file contains information about one group
+	groupname:group_password(x):group_id:list_of_group_members
+
+     d. userdel <username> ==> deletes a user account but home directory still exists
+        userdel -r <username> ==> deletes a user account along with the home directory
+     e. usermod -c "DevOps Enginner" sarah
+     f. User password are stored in a file called /etc/shadow
+     g. How to Lock a user account?
+	 usermod -L(Lock) <username>
+	 usermod -U(Unlock) <username>
+     g. UID Ranges : 
+		UID 0 is reserved for root user
+		UID 1-200 is a range of "system users" assigned statically to system processes by Redhat
+		UID 201-999 is a range of "system users" used by system processes that do not own files in the
+		filesystem.
+		UID 1000+ is the range of "regular users"
+     h. User and group specific default values are stored in /etc/login.defs
+
+   Primary Group and Secondary Group
+   --------------------------------
+   a. Whenever we create a user in Linux, a group is also created automatically in the same name of that user.
+   One user can have only one Primary Group but can have multiple Secondary Group(s)
+   
+   head => It dislays first 10 lines of a file 
+   head -n 5 => 5 lines
+   tail => It dislays last 10 lines of a file 
+   tail -n 5 => 5 lines
+   
+   b. root has a reserved GID as 0
+   c. Create a group with a specifc group id ==> groupadd -g 10001 hr
+   d. groupdel and groupmod commands are there like userdel and usermod
+   e. Secondary Group assignment ==> usermod -G <group_name> <user_name> [ -G is for secondary group ]
+      Primary Group assignment ==> usermod -g <group_name> <user_name>   [ -g is for primary group ]

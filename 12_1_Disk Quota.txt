@@ -1,0 +1,36 @@
+Implementing Disk Quota
+------------------------
+1. Disk space can be restricted by implementing disk quota.
+2. The quota rpm must be installed
+3. Steps -
+        a. Enable quotas per filesystem by modifying /etc/fstab
+        vim /etc/fstab
+        /home           defaults,usrquota,grpquota
+        Save and exit
+        b. Remount the filesystem(s)
+        mount -o remount /home
+        mount | grep home
+        c. Create the quota database files
+        quotacheck -cugv /home
+                -c => Create quota specific files (aquota.user & aquota.group)
+                -u => user specific quota file
+                -g => group specific quota file
+        After the files are created, run the following command to generate the table of current disk usage per filesystem with
+        quotas enabled.
+        d. Create a user called developer1 and assign quota policies for that user
+                edquota <username>
+                edquota -g <groupname>
+        setquota -u developer1 2048 4096 0 0 /home ==> To set a 2M softlimit and 4M hard limit for developer1 user
+
+Enabling and Disabling Disk Quota
+        quotaoff -vaug
+        quotaon -vaug
+
+To Report Disk Quota
+        repquota /home
+
+Login as developer1
+        dd if=/dev/zero of=somefile bs=1M count=3 ==> It should create a file of 3M
+        dd if=/dev/zero of=somefile bs=1M count=5 ==> It should NOT be able to create a file of 5M, it can create upto 4M only
+Soft Limit --> Warning Limit
+Hard Limit --> Threshold limit

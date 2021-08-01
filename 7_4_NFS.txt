@@ -1,0 +1,52 @@
+Network File Sharing Services
+-----------------------------
+Network File Sharing Services --> NFS / FTP / SMB
+----------------------------
+NFS ==> Network File System. It allows remote hosts to mount file systems over a network
+and interact with those filesystems as though they are mounted locally. This enables us to consolidate resources onto centralized servers in a network.
+
+NFS shares are generally defined in /etc/exports file or /etc/exports.d/*.exports
+RHEL8 supports NFS version 3(NFSv3) and NFS version 4(NFSv4). NFSv2 is not supported
+in RHEL8.
+
+The default NFS version in RHEL8 is 4.2
+
+NFS exports are by default read-only
+Package name : nfs-utils
+Services required by NFS :
+nfsd ==>  The NFS server kernel module that services requests for shared NFS filesystems
+rpcbind => Accepts port reservations from local rpc services.
+rpc.nfsd => This corresponds to the nfs-server service
+
+NFS shares==> directory / entire filesystem
+vim /etc/exports
+<dir_name/filesystem_name>      FQDN/DOMAIN/IP/NETWORK(access_mode)
+/storage                        192.168.1.0/24(ro,sync)
+/public                         *.example.com(rw,sync) *.cracker.org(ro,sync)
+/confidential                   192.168.1.100/24(rw,sync)
+
+systemctl restart nfs-server
+exportfs -r
+
+root_squash => This prevents root users connected remotely from having root privileges;
+instead, the NFS server assigns them the user ID nobody.
+
+Installing NFS
+--------------
+Package that needs to be installed ==> nfs-utils
+yum install nfs-utils
+
+Staring the NFS Server
+---------------------
+systemctl enable --now nfs-server
+
+Firewall
+-------
+firewll-cmd --permanent --add-service=nfs
+firewll-cmd --permanent --add-service=mountd
+firewll-cmd --permanent --add-service=rpc-bind
+firewall-cmd --reload
+
+mount NFS_Server_IP:/dir_name   /local_mount_point
+vim /etc/fstab
+NFS_Server_IP:/dir_name         /local_mount_point      nfs     defaults        0       0

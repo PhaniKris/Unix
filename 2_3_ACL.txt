@@ -1,0 +1,28 @@
+ACL = Access Control List
+------------------------
+ACL is used to provide user/group specific access on a file or directory.
+To view ACL on a file ==> getfacl <file_or_dir_name>
+To set ACL for a user ==> setfacl -m u:<username>:<permissions> <file_dir_name>
+To set ACL for a group ==> setfacl -m g:<username>:<permissions> <file_dir_name>
+
+To delete ACL ==> setfacl -x u:<username> <dir_name>
+
+Default ACL
+----------
+It can be configured so that the configured ACL gets inherited to the child objects.
+How to setup default ACL?
+	setfacl -m d:u:<user_name>:<permissions> <dir_name>
+How to delete default ACL?
+	setfacl -k d:u:<user_name> <dir_name>
+
+How to delete All configured ACLs
+	setfacl -b <dir_name> ==> It will delete standard ACLs as well as Default ACLs
+
+
+Note : We see a DOT(.) OR PLUS(+) in the first field of the ls -l command output.
+ DOT(.) means SELINUX (Security Enhanced Linux)
+ PLUS(+) means ACL is implemented
+
+setfacl -m m::r-x /tmp/testfile.txt
+
+ACL mask defines the maximum set of effective permissions that a user or group can have for a directory

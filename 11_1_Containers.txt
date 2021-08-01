@@ -1,0 +1,89 @@
+Container :
+==========
+1. Complete deployment unit to run an application which includes libraries, configuration files etc.
+2. Docker allows developers to package their application with all dependent libraries into a container and that container can run on a server or virtual machine that has the docker engine installed. The container can then share the underlying OS.
+3. Beauty of container – can be run anywhere as it has the application along with all required libraries.
+4. It is based upon a container image.
+
+Container Images:
+----------------
+1. To run a container, we need to have a base image.
+2. We can get a base image from repository(private/public) of DockerHub or by using docker pull command.
+3. Base images do NOT run by themselves, containers make use of it.
+4. All base images are based upon a docker file which is just a text file and contains all instructions.
+
+Comparing Containers to Virtual Machines
+---------------------------------------
+Containers provide many of the same benefits as virtual machines, such as security, storage, and network isolation.
+Both technologies isolate their application libraries and runtime resources from the host operating system or hypervisor and vice versa.
+Virtualization :
+---------------
+	Enables multiple operating systems to run simultaneously on a single hardware platform.
+	Uses a hypervisor to divide hardware into multiple virtual hardware systems, allowing multiple operatinga
+        systems to run side by side.
+	Requires a complete operating system environment to support the application.
+
+Exploring the Implementation of Containers
+-----------------------------------------
+Red Hat Enterprise Linux implements containers using core technologies such as :
+•	Control Groups (cgroups) for resource management.
+•	Namespaces for process isolation.
+•	SELinux and Seccomp (Secure Computing mode) to enforce security boundaries.
+
+Container images package an application together with all its dependencies, such as :
+•	System libraries
+•	Programming language runtimes 
+•	Programming language libraries
+•	Configuration settings
+
+Managing Containers with Podman
+===============================
+It is good to learn  about containers with individual container on a single server acting as a container host. Red Hat
+ Enterprise Linux provides a set of container tools that you can use to do this, including.
+•	podman, which directly manages containers and container images.
+•	skopeo, which you can use to inspect, copy, delete, and sign images.
+•	buildah, which you can use to create new container images.
+
+These tools are compatible with the Open Container Initiative (OCI). They can be used to manage any Linux containers created by OCI-compatible container engines, such as Docker. These tools are specifically designed to run containers under Red Hat Enterprise Linux on a single-node container host.
+
+Installing Container Management Tools
+-------------------------------------
+[root@localhost -]# yum module install container-tools
+
+Container Naming Conventions
+---------------------------
+Container images are named based on the following full qualified image name syntax:
+Registry_name/user_name/image_name : tag
+•	The registry_name is the ame of the registry storing the image. It is usually the fully qualified domain name
+        of the registry 
+•	The user_name represents the user or organization to which the image belongs.
+•	The image_name must be unique in the user namespace
+•	The tag identifies the image version. If the image name includes no image tag, then latest is assumed.
+
+Inspecting Container Images
+---------------------------
+You can view information about an image before downloading it to your system. The skopeo
+Inspect command can inspect a remote container image in a registry and display information about it.
+The following example inspects a container image and returns image information without pulling the image to the local system:
+skopeo inspect docker://registry.redhat.io/rhe18/python-36
+
+Mapping Container Host Ports to the Container
+---------------------------------------------
+The following example uses the –d option to run the container in detached mode (as a daemon).
+podman run --name myweb –d –p 8000:80 registry.redhat.io/rhel8/httpd-24
+
+Passing Environment Variables to Configure a Container
+-----------------------------------------------------
+Use the podman run command with the –e option to pass environment variables to a process inside the container. In the 
+following example, environment and port options apply configuration settings to the container.
+
+podman run –d - - name container_name –e  MYSQL_USER=user1 -e MYSQL PASSWORD=redhat –e MYSQL_DATABASE=productdb 
+-e MYSQL_ROOT_PASSWORD=redhat –p 3306:3306 registry.redhat.io/rhel8/mariadb
+
+The podman kill command sends UNIX signals to the main process in the container. These are the same signals used by the kill command.
+This can be useful if the main process in the container can take actions when it receives certain signals, or for troubleshooting purposes. If no signal is specified, podman kill sends the SIGKILL signal, terminating the main process and the container.
+
+Attaching Persistent Storage to a Container
+-------------------------------------------
+podman run –d –name mydb –v /home/user/dbdir:/var/lib/mysql:Z -e MYSQL_USER=user –e MYSQL_PASSWORD=redhat
+ –e MYSQL_DATABASE=testdb registry.redhat.io/rhel8/mariadb

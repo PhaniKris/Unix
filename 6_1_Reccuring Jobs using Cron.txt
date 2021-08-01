@@ -1,0 +1,36 @@
+Scheduling Recurring user jobs
+------------------------------
+If root wants to schedule a job for a particular user : crontab -e -u <username>
+Help for setting up vron job ==> man 5 crontab
+
+To display the cron jobs => crontab -l
+To delete cronjob => crontab -r
+To edit jobs for the current user => crontab -e
+
+/etc/cron.allow => by default does not exist
+/etc/cron.deny => exists but empty
+
+# The server should be powered off everyday at 10:30 PM
+30      22      *       *       *       /usr/sbin/poweroff
+# To mail a Disk Free report to admin@exampl.com everyday at 5:30 PM
+30	17	*	*	*	df -Th | mail -s "Disk Free Report" admin@example.com
+
+# Execute the command /usr/local/bin/yearly_backup at 9 AM on January 31, everyday
+0	9	31	1	/usr/local/bin/yearly_backup
+
+# Send an email containg the text Hello to the owner of the job, every 5 minutes between 9 AM an 5 PM on every Friday in July
+*/5	9-17	*	July	5	echo "Hello"
+
+# Run the script /usr/local/bin/daily_report every weekday at 2 minutes before midnight
+58	23	*	*	1-5	/usr/local/bin/daily_report
+
+
+Note: Install and use mutt [ is a mail client ] to send a mail from root user to some other user
+	yum install mutt
+	mutt username
+
+#Execute the mutt command to send mail message "Checking in" to the recipient boss@example.com on every weekday at 9 am
+0	9	*	*	1-5	echo "Hi boss, just checking in" | mutt -s "Checking in office" boss@example.com
+
+/etc/anacrontab ==> The purpose of anacrontab is to make sure that important jobs always run and not skipped accidentally
+because the system was turned off or hibernating when the job should have been executed.

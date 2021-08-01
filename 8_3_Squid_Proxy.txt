@@ -1,0 +1,33 @@
+Squid Proxy Server
+-----------------
+
+1. Squid is proxy server that caches content to reduce the bandwidth and load web pages faster.
+2. Package ==> squid
+3. Config File ==> /etc/squid/squid.conf
+4. Default port ==> 3128
+yum install squid
+systemctl enable --now squid
+systemctl status squid
+vim /etc/squid/squid.conf
+
+Squid log files ==>
+  /var/log/squid/access.log
+  /var/log/squid/cache.log
+
+Configuring Squid Proxy Server as an HTTP Proxy
+----------------------------------------------
+We need to add proper ACL entries in squid.conf file for providing access to the clients to internet.
+ ## ACL Definition
+ acl localnet src 172.16.0.0/16
+ acl examplenet src 192.168.1.0/24
+ acl myinternet src 0.0.0.0
+ acl appport  port 91
+
+ ## Allow the ACL
+ http_access allow myinternet
+ http_access allow examplenet
+ http_access allow localnet
+ http_access allow appport
+
+ http_access deny all
+

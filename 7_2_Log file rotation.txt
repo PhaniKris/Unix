@@ -1,0 +1,13 @@
+Log File Rotation
+-----------------
+The logrotate tool rotates the log files to keep them from taking up too much space in the filesystem containing 
+the /var/log directory. 
+When a log file is rorated, it is renamed with an extension undicating the date it was rotated.
+eg. the old /var/log/messages file may become /var/log/messages-20201117 if it is rotated on 17.11.2020.
+Once the old log file is rotated, a new log file is created and the service that writes to it is notified.
+
+After a certail no. of rotations, typically after 4 weeks, oldest log file is discarded to free up disk space. 
+A scheduled job runs the logrotate program daily to see if any logs need to be rotated. 
+
+For more information ==> man 8 logrorate
+Logrotate configuration file ==> /etc/logrotate.conf

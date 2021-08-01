@@ -1,0 +1,11 @@
+Administering servers remotely through Cockpit
+---------------------------------------------
+Web Console is a web based managment interface for RHEL8 designed for managing andmonitoring the servers remotely.
+
+
+yum install cockpit
+systemctl enable --now cockpit
+firewall-cmd --permanent --add-service=cockpit
+firewall-cmd --reload
+
+Default port that cokpit listens on is ==> 9090

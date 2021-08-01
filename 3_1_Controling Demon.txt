@@ -1,0 +1,193 @@
+Controlling Services and Daemons
+------------------------------------------------------------------------
+Prior to RHEL7, we used to manage the services using the service and chkconfig command.
+But in RHEL7 and RHEL8, we use a single command called systemctl to manage the services.
+
+Upto RHEL6, the first process was => init [ PID = 1 ]
+In RHEL7 and RHEL8, the first process is ==> systemd [ PID = 1 ]
+
+The systemd daemon manages startup for Linux, including service startup and service management. It activates
+system resources, server daemons and other processes both at boot time and on a running system.
+
+Daemons
+-------
+1. Daemons are processes that either wait or run in the background, performing various tasks. 
+2. Generally, daemons start automatically at boot time and continue to run until shutdown or until they are
+    manually stopped.
+3. It is a convention that daemin names end with the letter called 'd'. eg. httpd / sshd / chronyd
+
+Service
+-------
+1. is nothing but a process which may not keep on running always
+2. On-demand start/stop
+
+Managing Services : the commands
+--------------------------------
+Prior to RHEL7
+	service sshd start
+	service sshd stop
+	service sshd restart
+	service sshd status
+To put a service into the system startup so that the service gets started automatically whenever the system 
+is started ::     chkconfig sshd on
+
+------------------------------------------
+In RHEL7 & RHEL8 ==> 
+	systemctl start sshd
+	systemctl stop sshd
+	systemctl restart sshd
+	systemctl reload sshd
+	systemctl status sshd
+
+To put a service into the system startup so that the service gets started automatically whenever the system 
+is started :: systemctl enable sshd
+
+	systemctl enable sshd --now  ==> Will start and enable the sshd service
+
+To verify that a service is currentily active(running)
+	systemctl is-active sshd
+
+
+To verify that a service is enabled or not
+	systemctl is-enabled sshd
+
+-------------------------------------------------
+Runlevel vs. Target
+====================
+Runlevel indicates the running state of the system
+ 0 ==> Halt
+ 1 ==> Single User Mode
+ 2 ==> Multi-user without network support
+ 3 ==> Multi-user with network support. CLI mode
+ 4 ==> Unassigned
+ 5 ==> GUI.. X-Window System
+ 6 ==> Reboot
+
+ init 0 => will halt the system
+ init 1 => Will put the system in single user mode. It doesn't ask for the password in single user mode.
+
+To change the Runlevel permanantly, edit the /etc/inittab file =>
+	vim /etc/inittab ==> change the default runlevel here... (RHEL 6 and below)
+
+RHEL 7 and above
+Ctrl-Alt-Delete is handled by /usr/lib/systemd/system/ctrl-alt-del.target
+#
+# systemd uses 'targets' instead of runlevels. By default, there are two main targets:
+#
+# multi-user.target: analogous to runlevel 3
+# graphical.target: analogous to runlevel 5
+#
+# To view current default target, run:
+# systemctl get-default
+#
+# To set a default target, run:
+# systemctl set-default TARGET.target
+
+------------------------------------------------------------------------- 
+  graphical.target ==> System supports multi-user, graphical and text-based logins.
+  multi-user.target ==> System supports multiple users, text-based login only
+  rescue.target ==> sulogin prompt, root filesystem gets mounted in read-write mode
+  emergency.target ==> sulogin prompt, system root gets mounted in read-only mode
+
+  How to display the default Target?
+	systemctl get-default
+  How to change the default Target?
+	systemctl set-default graphical.target
+  To switch from one target to another target ==>
+	systemctl isolate multi-user.target
+
+
+Configuring and Securing SSH
+---------------------------
+1. SSH stands for Secure Shell 
+2. What is OpenSSH? 
+	OpenSSH implements the Secure Shell or SSH protocol in RHEL systems
+3. SSH listens on Port ==> 22    telnet==>23     http==>80    https==>443    ftp==> 20(Data) & 21(Connection)
+4. Remote host's identity gets stored in ~/.ssh/known_hosts file
+5. SSH server Details :
+     Daemon : sshd
+     Port : 22
+     Configuration File : /etc/ssh/sshd_config
+6. How to restrict root login in SSH server?
+	vim /etc/ssh/sshd_config
+	 # PermitRootLogin yes
+         Uncomment the line and replace yes with no
+
+       Restart/Reload the service
+
+
+7. Configuring SSH Key-based authentication
+      Key Pair ==> Private Key + Public Key
+
+    a. Generate a Key-Pair :
+	ssh-keygen ==> will create 2 files => ~/.ssh/id_rsa [ Private Key ] and ~/.ssh/id_rsa.pub [ Public Key ]
+    b. Transfer the Public key to the Remote server where we want to login without password
+         ssh-copy-id devops@Remote_Server_IP ==> The key will get copied into the file
+						 ~/.ssh/authorized_keys
+    c. Login to the remote server as devops@ServerIP ==> It should be a Password-less key-based login
+
+----------------------------------------------------
+1. Installation of RHEL7/RHEL8 as a virtual machine
+2. How to register a RHEL system with redhat so that the system gets continuous updates/bug-fixes/patches
+   to keep the server up-to-date
+   We can do the system registration during the time of installation or after the installation is over.
+   subscription-manager is the command for managing subscriptions.
+	subscription-manager list
+	subscription-manager register
+   		yum update
+	subscription-manager unregister
+	subscription-manager status
+
+
+3. To display the RHEL version and release ==> cat /etc/redhat-release OR cat /etc/os-release
+4. To display the CPU information ==> lscpu
+5. To display memory ==> free -m
+6. To display CPU architecture ==> arch
+7. To display USB information ==> lsusb
+8. To display the disk free information ==> df [Disk Free] ==> df -Th
+
+--------------------------------------------------------------------------------
+Steps to configure a YUM Repository Server :
+1. Create a directory called /rhel8
+2. Copy the contents of RHEL7/RHEL8 ISO file into the /rhel8 directory
+3. Create a Repofile
+	cd /etc/yum.repos.d
+	vim rhel8.repo
+	[base]
+	name = My Local repo
+	baseurl = file:///rhel8
+	enabled = 1
+	gpgcheck = 0
+        
+ yum install tree
+
+==========================================================================
+
+Package Management
+---------------------
+Install/Remove/Update/Query
+
+Package Managent Tools --> rpm / yum / dnf
+1. rpm does NOT have a repository concept and it does NOT support dependency resolution but yum has support
+   for both
+2. DNF is an advanced version of yum 
+3. To disable lookup of registration status of a system ==>
+	cd /etc/yum/pluginconf.d/subscription-manager.conf -> Changed enabled=1 to enabled=0
+   We can disable this in case our system is not registered witrh Redhat
+
+To list the currently installed packages ==> rpm -qa <==> yum list installed
+To query a package ==> rpm -q <package_name>    <==> yum list installed <package_name>
+To remove a package ==> rpm -e <package_name>   <==> yum remove <package_name>
+To install a package ==> rpm -ivh samba...rpm   <==> yum install samba -y
+To display the owning package for a file ==> rpm -qf /etc/passwd <==> yum whatprovides /etc/passwd
+To list the files within a package ==> rpm -ql <package_name>
+To update the system ==> yum update 
+To display information about a package ==> rpm -qi <package_name>   <==> yum info <package_name>
+To list the available and installed groups ==> yum group list
+To install a group ==> yum group install "Group_Name"
+To remove a group ==> yum group remove "Group_Name"
+To display a summary of installed and removed packages ==> yum history
+To reverse a yum transaction ==> yum history undo transaction_no
+To enable/disable repositories, we can use yum-config-manager command
+	yum-config-manager --disable <repo_name>
+	yum-config-manager --add-repo="http://dl.fedoraproject.org/pub/epel/8/x86_64"

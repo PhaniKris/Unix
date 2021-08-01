@@ -1,0 +1,80 @@
+Electronic Mail Services
+==========================
+1. Protocols involved ==> 
+    a. SMTP => Simple Mail Transfer Protocol..Port==> 25 ==> To send mails
+    b. POP3 => Post Office Protocol ==> Port==> 110 and IMAP ==> 143 ==> To receive mails
+
+2. Clients ==> MS-Outlook // Ximian Evolution  //   Mozilla Thunderbird
+    Webmail vs. Pop Client
+
+3. To provide a Web interface for webmail ==> squirrelmail
+
+4. SMTP server ==> sendmail /  postfix
+   POP/IMAP   ==>  dovecot
+
+5. MTA ==> Mail Transfer Agent eg. postfix / sendmail
+   MUA ==> Mail User Agent eg. MS-Outlook, Thunderbird
+   MDA ==> Mail Delivery Agent eg. procmail
+
+[[ sendmail ==> /etc/sendmail/senmail.mc .. Redhat used to provide a human-readable config file called
+   sendmail.cf. We used make configuration changes in this sendmail.cf file and then used to redirect the 
+   changes into the sendmail.mc file...==>   m4 /etc/sendmail/sendmail.cf > /etc/sendmail/sendmail.mc ]]
+
+What is postfix ==> It is a powerful but easy-to-configure mail server. It is the default mail server in RHEL7
+and RHEL8. Postfix is provided by the postfix RPM package. It is a modular program made up of several 
+cooperating programs. Its components are controlled by the [[ master ]] process.
+
+Main configuration file ==> /etc/postfix/main.cf 
+Another important config. file ==> /etc/postfix/master.cf
+
+Text based clients ==> mail [ Package ==> mailx ] / mutt [ Package ==> mutt ]
+
+postconf - Postfix configuration utility
+
+Important Postfix configuration settings
+---------------------------------------
+inet_interfaces = localhost [ Controls which network interface Postfix listens on for incoming and outgoing 
+messages ]
+
+myorigin = $myhostname [ Rewrite locally posted email to appear to come from this domain ]
+
+relayhost = [ corporate_mail_server_ip ] Forward messages to the mail server that are supposed to send messages
+outside.
+
+mydestination =           Configure which domains the mail server is an end point for.
+
+mynetworks = 172.16.0.0/16   Allow relay through this mail server from a comma-separated list of IP addresses and 
+networks in CIDR notation.
+
+
+local_transport =      Determine how email addressed to $mydestination should be delivered.
+
+We can edit main.cf file manually or [ postconf ] utility can be used for modifying main.cf without opening
+it in any editor.
+
+postconf ==> to query all settings from /etc/postfix/main.cf file
+To query a specific parameter(s) ==> postconf inet_interfaces myorigin
+To modify ==> postconf -e 'myorigin = example.com'
+
+Steps to configure Postfix
+-------------------------
+1. Install postfix package ==> yum install postfix
+2. Start and Enable postfix srever ==> systemctl enable --now postfix
+   Allow postfix service via firewalld
+       firewall-cmd --permanent --add-service=postfix
+       firewall-cmd --reload
+3. Install the mail clients package - mailx and mutt
+      yum install mailx mutt
+3. To verify the service is working, we can install mailx or mutt package.
+       Login as root and send a test mail to student user
+           mail student
+             Subject : Test mail from root user
+             Hello student,
+               This is a test mail..
+             .  [ Press DOT to end the mail ]
+             EOT [ End of text ]
+
+     Check the /var/log/maillog file for any mail related log 
+     To check mail by the recipient user ==>
+             login as student and give the command mail
+

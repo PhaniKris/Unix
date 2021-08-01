@@ -1,0 +1,60 @@
+DNS ==> Domain Name System
+1. It is a hierarchical naming system that servers as a directory of networked hosts and resources.
+2. FQDN => Fully Qualified Domain Name   server1.example.com
+3. Authoritative and Non-Authoritative nameserver
+4. Name Resolution / Lookup ==> Forward Lookup [ Name to IP ] and Reverse Lookup [ IP to Name ]
+5. For a Domain, we need to configure Zone files ==> Forward Lookup Zone file & Reverse Lookup Zone file 
+6. DNS Query==> Recursive [ workload is on the DNS Network ] & Iterative [ workload is on client ] 
+7. Name Service Switch file ==> /etc/nsswitch.conf
+8. DNS client tools ==> nslookup / host / dig
+9. Domain ==> is a collection of resource records.
+   DNS Resouce Records [RR ] ==> SOA [ Start Of Authority ] / NS [ Name Server ] 
+   A [ Address Record ==> Name to IP /  CNAME [ Canonical Name ==> Alias ] 
+   MX [ Mail Exchanger ] /  PTR [ Pointer Record ==> IP to Name ]
+10. A Resource Record contains a TTL, a Class, a Type, Data elements
+     OWNER-NAME			TTL		CLASS		TYPE		DATA
+     www.example.com.   	300		IN		A		192.168.1.100
+     a.root-servers.net.   	604800		IN		AAAA		2001:503:ba3e::2:30
+     www-dev.example.com.       30              IN              CNAME           lab.example.com.
+
+11. Package Name : bind   bind-utils
+    Daemon : named
+    Configuration File : /etc/named.conf
+    Zone Files location : /var/named
+    Port : 53
+   yum install bind bind-utils
+   systemctl start named
+   systemctl enable named
+   systemctl status named
+
+
+named-checkconf ==>  to check the syntax of named.conf file
+named-checkzone example.com forward.zone ==> to check the syntax of the zone file
+
+/etc/named.conf ==> 
+listen-on port 53 { 127.0.0.1; 172.31.2.195; };
+allow-query     { localhost; 0.0.0.0/0; };
+
+zone "example.com" IN {
+        type master;
+        file "forward.zone";
+};
+
+cd /var/named
+cp -p named.empty forward.zone
+vim forward.zone
+$TTL 86400
+@       IN SOA ip-172-31-2-195.ap-south-1.compute.internal. root.ip-172-31-2-195.ap-south-1.compute.internal. (
+                                        0       ; serial
+                                        1D      ; refresh
+                                        1H      ; retry
+                                        1W      ; expire
+                                        3H )    ; minimum
+@                                               IN      NS      ip-172-31-2-195.ap-south-1.compute.internal.
+@                                               IN      A       172.31.2.195
+ns1.example.com.                        IN      A       172.31.2.195
+server1.example.com.                    IN      CNAME   ns1.example.com.
+www1.example.com.                       IN      CNAME   ns1.example.com.
+Note : If FTP server is running on a different host, we need to put an A record for the host and then create 
+a CNAME record for the same.
+ftp.example.com.		        IN	CNAME	ns1.example.com.

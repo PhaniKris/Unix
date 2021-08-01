@@ -1,0 +1,73 @@
+Software RAID
+============
+Redundant array of independent disks (RAID)
+The basic idea behind RAID is to combine multiple devices, such as HDD, SSD or NVMe, into an array to accomplish performance or redundancy goals not attainable with one large and expensive drive. This array of devices appears to the computer as a single logical storage unit or drive.
+
+RAID allows information to be spread across several devices. RAID uses techniques such as disk striping (RAID Level 0), disk mirroring (RAID Level 1), and disk striping with parity (RAID Levels 4, 5 and 6) to achieve redundancy, lower latency, increased bandwidth, and maximized ability to recover from hard disk crashes.
+
+System Administrators and others who manage large amounts of data would benefit from using RAID technology. Primary reasons to deploy RAID include:
+
+--> Enhances speed
+--> Increases storage capacity using a single virtual disk
+--> Minimizes data loss from disk failure
+--> RAID layout and level online conversion
+
+Steps to Create
+---------------
+1. Install mdadm package ==> yum install mdadm
+2. Create RAID of two block devices with names /dev/sda1 and /dev/sdc1, use the following command:
+   # mdadm --create /dev/md0 --level=<level_value> --raid-devices=2 /dev/sda1 /dev/sdc1
+3. Check the status of RAID, use the following command:
+   # mdadm --detail /dev/md0
+   # cat /proc/mdstat
+4. To create a file system on a RAID drive, use the following command:
+   # mkfs -t <file-system-name> /dev/md0
+5. To create a mount point for RAID drive and mount it, use the following commands:
+   # mkdir /mnt/raid1
+   # mount /dev/md0 /mnt/raid1
+6. To add a new disk to the array, use the following command:
+   # mdadm --manage /dev/md0 --add /dev/sdd
+
+Monitoring RAID
+--------------
+1. To create a configuration file for monitoring array you must scan the details and forward the result to
+   /etc/mdadm.conf file. To do so, use the following command:
+   # mdadm --detail --scan >> /etc/mdadm.conf
+   Note, that ARRAY and MAILADDR are mandatory variables.
+
+2. Open the configuration file /etc/mdadm.conf with a text editor of your choice.
+   Add the MAILADDR variable with the mail address for the notification. For example, add new line:
+
+	MAILADDR <example@example.com>
+	where example@example.com is an email address to which you want to receive the alerts from the array monitoring.
+
+	Save changes in the /etc/mdadm.conf file and close it.
+
+Replacing a faulty disk in a RAID
+---------------------------------
+1. Ensure which disk is failing. To do so, enter the following command:
+   # journalctl -k -f
+   # cat /proc/mdstat
+You will find a message showing you which disk has failed:
+md/raid:md0: Disk failure on sdg, disabling device.
+md/raid:md0: Operation continuing on 5 devices.
+
+2. Add a new disk to the array. To do so, enter the following command:
+   # mdadm --manage /dev/md0 --add /dev/sdh 
+
+3. Mark the failed disk as faulty. To do so, enter the following command:
+   # mdadm --manage /dev/md0 --fail /dev/sdg
+
+4. Check if the faulty disk was masked correctly by using the following command:
+   # mdadm --detail /dev/md0
+
+5. Finally, remove the faulty disk from the array. To do so, enter the following command:
+   # mdadm --manage /dev/md0 --remove /dev/sdg
+   Check RAID details by using following command:
+   # mdadm --detail /dev/md0
+
+6. Clean up : 
+    Unmount the filesystem
+    Stop the RAID device ==> mdadm -S /dev/md0
+    Delete the RAID partitions
+    Remove any entry for RAID 

@@ -1,0 +1,8 @@
+Selinux Booleans
+----------------
+Selinux booleans are switches that change the behavior pf the SELinux policy.
+To display booleans ==> getsebool -a
+To set boolean ==> setsebool -P bool_name on/off [ -P will write changes 
+permamnently in the policy ]
+
+semanage boolean -l -C | grep ftp

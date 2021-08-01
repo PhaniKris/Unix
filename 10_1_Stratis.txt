@@ -1,0 +1,12 @@
+Implementing Storage using New Features
+-------------------------------------------------------
+1. The current local storage solution in RHEL includes many stable and mature technologies -
+   Device Mapper(dm) / LVM / XFS Filesystem / Snapshots / RAID
+
+2. With RHEL8, Redhat has introduced the STRATIS storage managenet solution. It will work with
+   existing RHEL storage components.
+3. Stratis runs as a service(stratisd) that manages pools of physical storage devices and creates
+   and manages volumes for the filesystems being created.
+4. In a volume-managed filesystem, filesystems are built inside shared pools of disks using 
+   a concept called thin provisioning.
+5. Currently, we can create upto 2^24( 2 to the power 24) filesystems per pool. 

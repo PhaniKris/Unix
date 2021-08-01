@@ -1,0 +1,35 @@
+Network teaming
+--------------
+Network teaming is method for linking NICs together logically to allow for failover or higher throughput. Teaming is a new implementation that
+ does not affect the older bonding driver in the Linux kernel; it offers an alternate implementation.
+
+Red Hat Enterprise Linux 7 implements network teaming with a small kernel driver and a userspace daemon, teamd. The kernel handles network packets
+ efficiently and teamd handles logic and interface processing. Software, called runners, implement load balancing and active-backup
+logic, such as roundrobin. 
+
+The following runners are available to teamd:
+• broadcast: a simple runner which transmits each packet from all ports.
+• roundrobin: a simple runner which transmits packets in a round-robin fashing from each of the ports.
+• activebackup: this is a failover runner which watches for link changes and selects an active port for data transfers.
+• loadbalance: this runner monitors traffic and uses a hash function to try to reach a perfect balance when selecting ports for packet transmission.
+• lacp: implements the 802.3ad Link Aggregation Control Protocol. Can use the same transmit port selection possibilities as the loadbalance runner.
+
+Link Aggregation
+----------------
+--> The term link aggregation refers to various methods of combining (aggregating) multiple network connections in parallel in order to increase throughput
+     beyond what a single connection could sustain, and to provide redundancy in case one of the links should fail. 
+
+--> A link aggregation group (LAG) is the collection of physical ports combined together.
+
+All network interaction is done through a team interface, composed of multiple network port interfaces. When controlling teamed port interfaces
+ using NetworkManager, and especially when fault finding, keep the following in mind:
+
+• Starting the network team interface does not automatically start the port interfaces.
+• Starting a port interface always starts the teamed interface.
+• Stopping the teamed interface also stops the port interfaces.
+
+
+-------------------------
+For Ansible ==> https://docs.ansible.com
+Ansible Training [ RHCE : RH294 ] ==> https://www.redhat.com/en/services/training/rh294-red-hat-linux-automation-with-ansible
+Ansible Training [ DO447 ] ==> https://www.redhat.com/en/services/training/do447-advanced-automation-ansible-best-practices

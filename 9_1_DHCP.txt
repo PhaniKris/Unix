@@ -1,0 +1,71 @@
+DHCP ==> Dynamic Host Configuration Protocol
+===============================================================
+1. DHCP provides a method for systems to automatically retrieve thier network configuration parameters such as
+IP address, Default Gateway, DNS server and Domains, NTP server...
+
+2. By deploying a DHCP server centrally, we can control these parameters.
+
+3. We allocate a range / pool of IP addresses to distribute to the clients.
+
+4. DHCP can also provide Reserved IP to specific client / servers
+
+5. DHCP handshaking ==> 
+     a. When we configure a system as DHCP Client, it sends a DHCPDISCOVER packet to 255.255.255.255 broadcast
+         destinantion.
+     b. The DHCP server responds with a DHCPOFFER packet that contains its own IP address and an IP address
+        that the client should use.
+
+     c. The client then broadcasts a DHCPREQUEST packet, requesting the IP address that the DHCP server offers.
+
+     d. After the DHCP server receives the DHCPREQUEST packet, it sends a DHCPACK packet acknowledging the
+        client has exclusive right to the client IP address until the lease expires.
+
+Steps to configure DHCP server
+-----------------------------
+i. Install the DHCP server package ==> yum install dhcp-server
+ii. Start and Enable the service ==> systemctl enable --now dhcpd
+                                     systemctl status dhcpd
+
+iii. Allow dhcp service via firewalld
+       firewall-cmd --permanent --add-service=dhcp
+       firewall-cmd --reload
+iv. Copy the Sample configuration file in /etc/dhcp/dhcpd.conf
+    cp /usr/share/doc/dhcp-server/dhcpd.conf.example /etc/dhcp/dhcpd.conf
+v. Make changes to the dhcpd.conf file as per the requirements
+    Parameter Description                        Value
+   ----------------------------------------------------
+Authoritative for the network segment             yes
+Subnet						  192.168.0.0
+Subnet Mask					  255.255.255.0
+Range						  192.168.0.100 to 192.168.0.150
+Default Gateway for the Subnet			  None
+DNS Server					  192.168.0.254
+DNS Domain Name					  example.com
+Default Lease Time				  600 seconds
+Maximum Lease time				  7200 seconds
+
+authotitative;
+  
+subnet 192.168.0.0 netmask 255.255.255.0 {
+  range 192.168.0.100 192.168.0.150;
+  option domain-name-servers 192.168.0.254;
+  option domain-name "example.com";
+  option routers 192.168.0.1;
+  option broadcast-address 192.168.0.255;
+  default-lease-time 600;
+  max-lease-time 7200;
+}
+
+host webserver.example.com {
+  hardware ethernet 08:00:07:26:c0:a5;
+  fixed-address 192.168.0.60;
+}
+
+
+After modifying the dhcpd.conf file, save and quit
+dhcpd -t [ to check the syntax ]
+echo $? ==> If it returns 0, that means it ran successfully.
+
+
+Lease Database file ==> /var/lib/dhcpd/dhcpd.leases
+

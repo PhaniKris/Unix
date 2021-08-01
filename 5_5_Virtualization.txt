@@ -1,0 +1,76 @@
+Virtualization
+-------------
+1. Optimum utilization of hardarwe
+2. Running multiple OSs on a single hardware
+3. Ease of administration
+
+Reference Link ==> https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/managing_systems_using_the_rhel_8_web_console/managing-partitions-using-the-web-console_system-management-using-the-rhel-8-web-console#displaying-partitions-in-the-web-console_managing-partitions-using-the-web-console
+
+yum install cockpit-composer cockpit-machines cockpit-podman cockpit-session-recording
+
+
+VMWare
+Linux-xen..kvm [ Kernel-based virtual machine ]
+Windows - Hyper-V
+
+To manage virtual machines --> virt-manager...now this command is deprecated
+Package to manage VMs --> virt-viewer ===> Cockpit
+
+Reference : https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/managing_systems_using_the_rhel_8_web_console/index
+
+yum install cockpit-machines --> Virtual Machines
+yum install virt-viewer
+
+yum install cockpit-dashboard --> Cockpit Dashboard
+
+libvirtd ==> Virtualization Daemon
+
+Building Images using Composer
+------------------------------
+Composer System Requirements ::
+1. Dedicated VM with SELinux in Permissive mode
+2. CPU with 2 cores
+3. 4 GB RAM
+4. 20 GiB disk space
+5. Internet connectivity
+
+yum install cockpit-composer lorax-composer composer-cli
+systemctl restart cockpit;systemctl enble --now lorax-composer.service
+Create a non-administraive user called ==> rhel. This user will manage blueprints
+and build machine images. The use must belong to the weldr group
+
+=========================================================================
+Image Builder Command-line Interface
+-----------------------------------
+Create a custom blueprint to use for machine image creation
+composer-cli blueprints list
+
+In order to make changes to the blueprint, you will first save a copy of the blueprint. composer-cli will output a TOML (Tom's Obvious Minimal Language) formatted file with the current description of the blueprint used to make example-http-server machine images.
+
+composer-cli blueprints save example-http-server
+
+You will be adding nodejs to the list of software included in the example-http-server blueprint. nodejs is distributed as an application stream for Red Hat Enterprise Linux, so you will need to add a [[modules]] section to the example-http-server.toml file adding nodejs to the build.
+
+printf '\n[[modules]]\nname = "nodejs"\nversion = "*"' >> example-http-server.toml
+
+Next, you will update the example-http-server blueprint definition to use the version currently stored in your local example-http-server.toml file. You will push this updated definition into the lorax-composer back-end.
+
+composer-cli blueprints push example-http-server.toml
+
+To verify that your update has been made, review the log of changes made to the example-http-server blueprint.
+
+composer-cli blueprints changes example-http-server
+
+composer-cli blueprints show example-http-server
+
+
+Building a custom RHEL machine image
+Use the composer-cli command to start a compose based on the example-http-server blueprint.
+
+composer-cli compose start example-http-server ext4-filesystem
+
+Monitor the image build process
+composer-cli compose status
+
+Validate the completed machine image
+composer-cli compose image $(composer-cli compose status | head -n1 | cut -f1 -d" ")

@@ -1,0 +1,46 @@
+Process Management
+------------------
+Program => is a set of instructions. It resides in secondary storage. It has a name given by the programmer.
+Process ==> is an executable instance of a program. It resides in primary memory(RAM). It does not have any name, each
+proces has a unique PID.
+	Instance ==> Each running copy of an application is called an instance
+
+ps ==> To display the list of processes in the current terminal
+ps -f => PID + PPID
+ps aux ==> list of all processes running in the system
+pstree ==>  to display the process tree
+jobs ==> to list the background jobs
+How to run a process in the background?    <command>  &
+To suspend a forground job ==> <ctrl> + z
+jobs ==> status would be stopped
+Also note the PID before you suspend it..
+Now the firefox application is non-responsive
+How to resume the suspended job? ==> bg %<job_id>
+
+kill command will send a signal to a process by PID number.
+To kill a process by Job ID ==> kill %<job_id>
+
+pkill command is used to send a signal to one or more proceses
+pgrep -l -u bob
+pkill -9 -u bob
+pkill -U user
+pstree -p bob
+
+nohup stands for no hangup. Prefixing a command with nohup prevents the command from being aborted automatically when we logout or exit the shell.
+
+Scheduling Proces Priorities
+----------------------------
+Lower the nice value, higher the priority and higher the nice value, lower the priority
+Only root user may reduce a process nice level
+Unprivileged users are only permitted to increase nice level on their own processes. They
+cannot lower the nice levels.
+
+The nice level values range from -20(highest priority) to 19(lowest priority). By default,
+processes inherit their nice level from their parent, which is usually 0(zero).
+
+To list all processes with their PID, Process Name, nice level(sorted fashion) ==>
+	ps axo pid,command,nice --sort=nice
+
+Starting a process with a different nice level ==> nice -n 5 firefox &
+Changing the nice level of an existing process ==> renice -n <new_nice_level> <PID>
+

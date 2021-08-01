@@ -1,0 +1,51 @@
+Automating with RHEL System Roles
+---------------------------------
+RHEL8 includes Ansible system roles to simplify automation of complex tasks and configuration of RHEL subsystems.
+Ansible==> is a configuration management tool and also an automation tool.
+Ansible is agent-less
+Python is a prerequisite for installing ansible. Ansible modules are written in python.
+Password-less SSH authentication needs to be configured
+Install Ansible ==> yum install ansible
+To get help on a particular ansible module ==> ansible-doc <module_name>
+
+To verify that no roles are initially available ==> ansible-galaxy list
+Install the rhel-system-roles package to get Ansible system roles in RHEL8
+System roles are located in ==> /usr/share/ansible/roles directory. A role beginning with linux-system-roles is a 
+symlink to the matching rhel-system-roles role.
+
+Ansible Configuration file ==> /etc/ansible/ansible.cfg
+Inventory file ==> /etc/ansible/hosts ==> Contains the list of hosts(FQDN,Name,IP address) which are to be managed by 
+					  Ansible.
+
+
+Perform the following tasks in the target host ==>
+a. Install httpd package [ Module : yum ]
+b. Start and Enable httpd service [ Module : service ]
+c. Copy a Custom index.html page to the webserver [ Module : copy ]
+
+Ansible Ad-Hoc commands
+Playbook ==> is a collection of plays (tasks)
+
+Sample Pleybook
+--------------
+---
+- name: Provisioning Apache Web server
+  hosts: web
+  tasks:
+    - name: Install httpd package
+      yum:
+        name: httpd
+        state: latest
+    - name: Start and Enable httpd service
+      service:
+        name: httpd
+        state: started
+        enabled: true
+    - name: Push index.html file 
+      copy:
+        src: /tmp/index.html
+        dest: /var/www/html/index.html
+
+
+ansible-playbook web.yaml --syntax-check ==> to check the syntax
+ansible-playbook web.yaml  ==> to run the playbook

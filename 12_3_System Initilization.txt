@@ -1,0 +1,22 @@
+System Initialization
+=====================
+Red Hat Enterprise Linux 8 Boot Process
+1. The machine is powered on. The system firmware, either modern UEFI or older BIOS, runs a Power On Self Test (POST) and starts to initialize some of the hardware.
+
+2. he system firmware searches for a bootable device, either configured in the UEFI boot firmware or by searching for a Master Boot Record (MBR) on all disks, in the order configured in the BIOS.
+
+3. The system firmware reads a boot loader from disk and then passes control of the system to the boot loader. On a Red Hat Enterprise Linux 8 system, the boot loader is the GRand Unified Bootloader version 2 (GRUB2).
+
+4. GRUB2 loads its configuration from the /boot/grub2/grub.cfg file and displays a menu where you can select which kernel to boot.
+
+5. After you select a kernel, or the timeout expires, the boot loader loads the kernel and initramfs from disk and places them in memory. An initramfs is an archive containing the kernel modules for all the hardware required at boot, initialization scripts, and more. On Red Hat Enterprise Linux 8, the initramfs contains an entire usable system by itself.
+
+6. The boot loader hands control over to the kernel, passing in any options specified on the kernel command line in the boot loader, and the location of the initramfs in memory.
+
+7. The kernel initializes all hardware for which it can find a driver in the initramfs, then executes /sbin/init from the initramfs as PID 1. On Red Hat Enterprise Linux 8, /sbin/init is a link to systemd.
+
+8. The systemd instance from the initramfs executes all units for the initrd.target target. This includes mounting the root file system on disk on to the /sysroot directory.
+
+Configured using /etc/fstab
+
+9. systemd looks for a default target, either passed in from the kernel command line or configured on the system.

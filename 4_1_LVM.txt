@@ -1,0 +1,45 @@
+Logical Volume Manager [ LVM ]
+------------------------------------------------------------------------------------
+Partition vs. Volume
+1. Partition can not be spanned across multiple disks but volume can
+2. Partition can not be resized easily but volumes can be extended online keeping the existing data intact.
+
+LVM1 ==> To increase volume size, we had to unmount it and then extend it.
+LVM2 ==> Online extension of volume is possible
+
+LVM creation process flow :
+--------------------------
+ Disk[/dev/sdb]---[fdisk]-->/dev/sdb1[2 GB]-->Toggle the partition ID from 83 to 8e to make it a Linux
+ LVM partition---[pvcreate]--->Physical Volume----[vgcreate]--->Volume Group---[lvcreate]-->Logical Volume
+ ---[mkfs]-->Create Filesystem----[mount]--->Mount the logical volume---[/etc/fstab]-->Persistent Mount
+
+Extent==>It is the building block of a volume. The default size of an extent is 4 MB.
+
+Create Physical Volume ==> 
+	pvcreate /dev/sdb1
+	pvs ==> To display brief description of PV
+	pvdisplay ==> To display detailed description of PV
+
+Create Volume Group ==>
+	vgcreate <vg_name> <pv_name>
+	vgcreate vg1 /dev/sdb1
+	vgs ==> To display brief description of VG
+	vgdisplay ==> To display detailed description of VG
+
+How to change the extent size?
+	vgcreate -s 8M vg1 /dev/sdb1
+
+Create Logical Volume ==>
+	lvcreate -n <lv_name> -L <lv_size> <vg_name>
+	lvcreate -n lv1 -L 300M vg1 [ -L is to specify the LV size ]
+	lvcreate -n lv1 -l 50 vg1   [ -l is to specify the no. of extents ]
+	lvs ==> To display brief description of LV
+	lvdisplay ==> To display detailed description of LV
+        	
+Create Filesystem on LV ==>
+	mkfs.ext4 /dev/vg1/lv1
+
+Mount the LV ==>
+	mount /dev/vg1/lv1   /mnt/lv1
+vim /etc/fstab
+/dev/vg1/lv1	/mnt/lv1	ext4	defaults	0	0

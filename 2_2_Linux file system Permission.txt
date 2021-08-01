@@ -1,0 +1,111 @@
+Linux Filesystem Permissions
+--------------------------------
+1. File permissions control access to files
+2. Linux users types --> Owner(u) / Group Owner(g) / Others(o)
+3. Basic Permissions --> 3 types --> read(r-->4) / write(w-->2) / execute(x-->1)
+4. ls -l /tmp ==> The first character of the long listing is the File Type, interpreted like this -
+        7 Fundamental File Types ::
+	a.  -  => is an ordinary file [ text / program / binary / audio / video file ]
+	b.  d  => is a directory
+	c.  l  => is a soft link
+	d.  b  => is a block device file
+	e.  c  => is a character device file
+	f.  s  => is a socket file
+	g.  p  => is a named pipe
+What is the command to display the file type ?  ==> file <filename>
+
+-rw-rw-r-- ==> [File_Type][Owner-u][Group-g][Other-o] ==> 4+2+0 4+2+0 4+0+0 ==> 664
+
+Changing Permissions with Symbolic Method
+-----------------------------------------
+What is u,g,o
+What is r,w,x
+What is +,-,= ( add / remove / set exactly )
+The command ==> chmod
+
+Changing file ownerships
+------------------------
+chown ==> to change owner / group owner / owner+group
+chgrp ==> to change only the group owner
+
+
+Special Permissions
+-------------------
+3 Special Permissions -
+a. suid [ Set User ID ==> s ==> 4 ] ==> can be implemented on Owner(u)
+b. sgid [ Set Group ID ==> s ==> 2 ] ==> can be implemented on Group(g)
+c. sticky bit [ t ==> 1 ] ==>  ==> can be implemented on others(o)
+
+-rwsr-xr-x ==> 4755
+-rwsr-sr-x ==> 6755
+-rwsr-sr-t ==> 7755
+
+------------------------
+Default File Permissions
+-------------------------
+1. When we create a new file or directory, it is assigned initial permissions.
+2. There are 2 things that affect these initial permissions - whether we are creating a file or directory
+   and umask
+Normal user's default umask ==> 002
+root user's default umask ==> 022
+IF THERE IS NO UMASK SET
+-----------------------
+ File        	      		Directory
+ 666			      	   777
+
+[ 666 - 002 ] = 664           [ 777 - 002 ] = 775
+
+[ 666 - 022 ] = 644           [ 777 - 022 ] = 755
+
+The initial permission for the directory should be 750. What umask value needs to be set?
+umask = 027
+[ 666 - 027 ] = 640              [ 777 - 027 ] =750
+
+---------------------------------------------------------------------------------------
+
+sudo
+====
+1. is used to provide administrative privilege to normal users.
+2. Create a user called admin who can perform user administration
+	visudo
+	devops  ALL= /usr/sbin/useradd, /usr/bin/passwd
+3. Configuration file for sudo ==> /etc/sudoers ==> It is opened in Read Only mode
+   To configure sudo access, give the command visudo [ it opens /etc/sudoers in Read-Write mode ]
+   The ALL=(ALL) specifies that on any host that might have this file, root can run any command
+
+======================================================================
+Command Aliases : 
+ To display the configured command aliases ==> alias
+ To set a command alias called cls, the command is ==> alias cls='clear'
+ To remove the alias ==> unalias cls
+
+Variables : A variable is nothing but a memory location which holds a value 
+   a. Local Variable : the variable is accessible from that shell only where it has been defined
+     	var1=10
+	echo $var1 ==> displays 10
+        bash ==> will create a new shell
+	echo $var1 ==> displays nothing
+	exit ==> kills the current shell and I will go back to the previous shell where I can again access the value of
+	var1 variable
+        So, var1 is a variable which accessible from the first shell only where we defined it. Hence, var1 is a Local
+	variable
+     
+   b. Global Variable : Global variables are accessible from other shells also.
+      We can define a local variable as Global by the command called export
+	export var1
+       --> Environment Variables ==> used to setup user environment
+	   env command is used to list these variables
+	   these variables are all in CAPS
+       ==> Write a shellscript to display a message "Hello World". This script should be executed from any directory.
+	   Hint: Setup PATH variable
+
+Startup Scripts
+---------------
+User Specific				System Wide
+~/.bash_profile			       /etc/profile   ==> specify startup scripts/welcome message
+~/.bashrc			       /etc/bashrc    ==> variables / aliases
+
+-----------------------------------------------------------------------------------------------------
+
+~./bash_history --> stores the history commands
+~./bash_logout  --> gets invoked when the user logs out of the system

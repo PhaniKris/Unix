@@ -1,0 +1,75 @@
+Selinux ==> Security Enahnced Linux
+Selinux Modes : 
+	1. Enforcing (1) - deny access and record the logs if policy is not matched
+	2. Permissive (0) - Warning-only mode.. allows access with a warning message and records log even if the policy gets
+			mismatched
+	3. Disabled  - no selinux policy is being checked
+
+How to know the current Selinux Mode? ==> getenforce
+How to change the Selinux mode temporariry? ==> setenforce 1 [ will change the mode to enforcing ] and 
+						setenforce 0 [ will change the mode to permissive ]
+
+DAC==>MAC==>Booleans
+How to change Selinux mode permanently? vim /etc/selinux/config
+
+Security Context ==> User(_u)+Role(_r)+Type(_t)
+How to display the security context?
+	ls -lZ
+
+Subject ==> Processes
+Object ==> Directory / File
+
+yum install httpd
+systemctl start httpd
+ps -eZ | grep httpd ==> To display the Selinux type of httpd process(Subject)
+ls -dZ /var/www/html ==> To display the Selinux Type of html directory(Object)
+mkdir /webcontent
+ls -dZ /webcontent ==>  Note the type is default_t
+
+Here, the type of the subject(httpd) does not match with the type of the object(/webcontent). So, even if we give 777
+permission to /webcontent directory, still httpd won't be able to access the content(index.html) of /webcontent
+
+How to change the Selinux type?
+  a. chcon ==> only runtime change is possible
+	chcon -t httpd_sys_content_t /webcontent
+	ls -dZ /webcontent
+	restorecon -Rv /webcontent ==> The type rolls back to default_t
+
+  b. semanage fcontext ==> persistent change
+	man semanage fcontext
+	semanage-fcontext - SELinux Policy Management file context tool
+	semanage fcontext -a -t httpd_sys_content_t "/webcontent(/.*)?"
+	restorecon -Rv /webcontent
+
+getsebool -a ==> to list selinux booleans
+setsebool -P <boolean_name> on ==> To change the boolean sttus
+semanage boolen -l -C ==> To display the current and default status of selinux boolean
+
+
+Controlling Selinux Port Labeling
+--------------------------------
+One application is deployed in the webserver and it is listening on a custom
+port
+List the port labels ==> semanage port -l
+Managing Port Labels ==> semanage port -a -t port_label -p tcp PORTNUMBER
+semanage port -a -t http_port_t -p tcp 82
+
+Run the webserver in a non-standard port 95
+vim /etc/httpc/conf/httpd.conf
+  Listen 80  ====> Listen 95
+systemctl restart httpd ===> Gives error
+
+This error is coming due non-labelling of the custom port 95
+
+Workaround:
+systemctl status auditd
+  suditd daemin records the logs in a file called ==> /var/log/audit/audit.log
+Monitoring Selinux Violations
+----------------------------
+yum install setroubleshoot
+rpm -q setroubleshoot-server
+setroubleshoot-server package is responsible to send SELinux messages to
+/var/log/messages. setroubleshoot-server listens for audit messages in
+/var/log/audit.log and sends a summary to /var/log/messages
+
+==========================================================================================

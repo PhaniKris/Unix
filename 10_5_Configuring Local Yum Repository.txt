@@ -1,0 +1,27 @@
+Configure a Local YUM Repository
+=====================================================================
+1. Login as root
+2. Download the RHEL8 ISO
+3. mount the ISO into a directory
+      mount -o loop rhel8.iso /mnt
+      mkdir /rhel8
+      cp -rv /mnt/*   /repo
+      umount /mnt
+
+4. Create REPO file
+        cd /etc/yum.repos.d
+        vim local.repo
+          [BaseOS]
+          name=Core OS repository
+          baseurl=file:///rhel8/BaseOS
+          enabled=1
+          gpgcheck=0
+
+          [AppStream]
+          name=Application modules and traditional packages repository
+          baseurl=file:///rhel8/AppStream
+          enabled=1
+          gpgcheck=0
+
+5. Test ==>   yum repolist
+
